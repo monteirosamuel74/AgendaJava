@@ -4,6 +4,7 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.regex.Pattern;
 
 import javax.swing.JButton;
 import javax.swing.JComboBox;
@@ -19,6 +20,7 @@ import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
 import javax.swing.text.MaskFormatter;
 
+import data.Email;
 import data.Pessoa;
 import data.Telefone;
 import data.TipoEmail;
@@ -37,21 +39,22 @@ public class ManutencaoAgenda extends JDialog {
 	JLabel labelDataNascimento = new JLabel();
 	JLabel labelTelefone = new JLabel();
 	JLabel labelTipoTelefone = new JLabel();
-	JLabel lblEmail = new JLabel();
+	JLabel labelEmail = new JLabel();
+	JLabel labelTipoEmail = new JLabel();
 
 	// TextField
 	JTextField textFieldNome = new JTextField();
 	JFormattedTextField textFieldCPF;
 	JFormattedTextField textFieldDataNascimento;
 	JFormattedTextField textFieldTelefone;
-	JFormattedTextField txtFldEmail;
+	JFormattedTextField txtFieldEmail;
 
 	// Table Telefone
 	TelefoneTableModel telefoneTableModel = new TelefoneTableModel();
 	JTable tabelaTelefone = new JTable(telefoneTableModel);
 	JScrollPane scrollTableTelefone = new JScrollPane(tabelaTelefone);
 
-	// Table eMAIL
+	// Table eMail
 	EmailTableModel emailTableModel = new EmailTableModel();
 	JTable tabelaEmail = new JTable(emailTableModel);
 	JScrollPane scrollTableEmail = new JScrollPane(tabelaEmail);
@@ -107,9 +110,19 @@ public class ManutencaoAgenda extends JDialog {
 		telefoneTableModel.setTelefones(new ArrayList<>());
 		telefoneTableModel.setTelefones(pessoa.getTelefones());
 	}
-
+	
 	private void excluirTelefone(Telefone telefone) {
 		pessoa.getTelefones().removeIf(t -> t == telefone);
+		SistemaAgenda.serializarUsuarios();
+	}
+
+	private void consultaEmail() {
+		emailTableModel.setEmails(new ArrayList<>());
+		emailTableModel.setEmails(pessoa.getEmails());
+	}
+
+	private void excluirEmail(Email email) {
+		pessoa.getEmails().removeIf(e -> e == email);
 		SistemaAgenda.serializarUsuarios();
 	}
 
@@ -212,6 +225,14 @@ public class ManutencaoAgenda extends JDialog {
 		labelTipoTelefone.setSize(50, 20);
 		labelTipoTelefone.setLocation(240, 265);
 
+		labelEmail.setText("E-mail:");
+		labelEmail.setSize(60, 20);
+		labelEmail.setLocation(20, 465);
+
+		labelTipoEmail.setText("Tipo:");
+		labelTipoEmail.setSize(50, 20);
+		labelTipoEmail.setLocation(240, 465);
+
 		// TextField
 		textFieldNome.setSize(300, 20);
 		textFieldNome.setLocation(120, 20);
@@ -227,7 +248,7 @@ public class ManutencaoAgenda extends JDialog {
 		}
 
 		try {
-			// Formata o campo de texto para o formato de telefone (8 digitos)
+			// Formata o campo de texto para data
 			MaskFormatter mascaraData = new MaskFormatter("##/##/####");
 			textFieldDataNascimento = new JFormattedTextField(mascaraData);
 			textFieldDataNascimento.setSize(150, 20);
@@ -246,11 +267,29 @@ public class ManutencaoAgenda extends JDialog {
 			System.out.println("Erro ao formatar mascara: " + exc.getMessage());
 		}
 
-		// ComboBox
+		try {
+			txtFieldEmail = new JFormattedTextField();
+			txtFieldEmail.setSize(130, 20);
+			txtFieldEmail.setLocation(90, 465);
+			if (!txtFieldEmail.getText().contains("@")) {
+			System.out.println("E-mail não pode ser aceito. Corrija.");
+			}
+		} catch (Exception e) {
+			System.out.println("Erro ao formatar mascara: " + e.getMessage());
+		}
+		
+		// ComboBox Telefone
 		comboBoxTipoTelefone.setSize(150, 20);
 		comboBoxTipoTelefone.setLocation(280, 265);
 		for (TipoTelefone tipo : TipoTelefone.values()) {
 			comboBoxTipoTelefone.addItem(tipo);
+		}
+
+		// ComboBox E-mail
+		comboBoxTipoEmail.setSize(150, 20);
+		comboBoxTipoEmail.setLocation(280, 465);
+		for (TipoEmail tipo : TipoEmail.values()) {
+			comboBoxTipoEmail.addItem(tipo);
 		}
 
 		// Telefone Buttons
@@ -322,6 +361,73 @@ public class ManutencaoAgenda extends JDialog {
 			}
 		});
 
+		// E-mail Buttons
+		btnEmailInserir.setSize(100, 30);
+		btnEmailInserir.setLocation(20, 490);
+		btnEmailInserir.setText("Inserir");
+		btnEmailInserir.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				try {
+					Email novoEmail = new Email(txtFieldEmail.getText(),
+							(TipoEmail) comboBoxTipoEmail.getSelectedItem());
+					pessoa.adicionarEmail(novoEmail);
+					SistemaAgenda.serializarUsuarios();
+					// Realiza uma consulta logo após fechar a janela
+					consultaEmail();
+				} catch (Exception exc) {
+					JOptionPane.showMessageDialog(null, exc.getMessage(), "Erro ao Inserir Registro",
+							JOptionPane.ERROR_MESSAGE);
+					System.out.println(exc.getMessage());
+				}
+			}
+		});
+
+		btnEmailAlterar.setSize(100, 30);
+		btnEmailAlterar.setLocation(140, 490);
+		btnEmailAlterar.setText("Alterar");
+		btnEmailAlterar.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				// Verifica se existe um registro selecionado
+				if (tabelaEmail.getSelectedRow() != -1) {
+					try {
+						// Pega o objeto E-mail da linha selecionada da tabela
+						Email email = emailTableModel.getEmailAt(tabelaEmail.getSelectedRow());
+						email.setEndereco(txtFieldEmail.getText());
+						email.setTipoEmail((TipoEmail)comboBoxTipoEmail.getSelectedItem());
+						// Realiza uma consulta logo após fechar a janela
+						SistemaAgenda.serializarUsuarios();
+						consultaEmail();
+					} catch (Exception exc) {
+						JOptionPane.showMessageDialog(null, exc.getMessage(), "Erro ao Alterar Registro",
+								JOptionPane.ERROR_MESSAGE);
+					}
+				}
+			}
+		});
+
+		btnEmailExcluir.setSize(100, 30);
+		btnEmailExcluir.setLocation(260, 490);
+		btnEmailExcluir.setText("Excluir");
+		btnEmailExcluir.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				// Verifica se existe um registro selecionado
+				if (tabelaEmail.getSelectedRow() != -1) {
+					String message = "Deseja realmente excluir o registro?";
+					String title = "Confirmação de exclusão";
+					int reply = JOptionPane.showConfirmDialog(null, message, title, JOptionPane.YES_NO_OPTION);
+					// Verifica se o usuário selecionou SIM
+					if (reply == JOptionPane.YES_OPTION) {
+						// Pega o objeto Telefone da linha selecionada da tabela
+						Email email = emailTableModel.getEmailAt(tabelaEmail.getSelectedRow());
+						// Chama o método de exclusão passando o ID como parâmetro
+						excluirEmail(email);
+						// Realiza uma consulta logo após a exclusão
+						consultaEmail();
+					}
+				}
+			}
+		});
+
 		// Buttons
 		buttonManutencao.setSize(100, 50);
 		buttonManutencao.setLocation(20, 550);
@@ -364,6 +470,19 @@ public class ManutencaoAgenda extends JDialog {
 		scrollTableTelefone.setSize(410, 120);
 		scrollTableTelefone.setLocation(20, 140);
 
+		// Tabela E-mail
+		tabelaEmail.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
+		tabelaEmail.getSelectionModel().addListSelectionListener(new ListSelectionListener() {
+			public void valueChanged(ListSelectionEvent event) {
+				if (tabelaEmail.getSelectedRow() != -1) {
+					txtFieldEmail.setText(tabelaEmail.getValueAt(tabelaEmail.getSelectedRow(), 0).toString());
+					comboBoxTipoEmail.setSelectedItem(tabelaEmail.getValueAt(tabelaEmail.getSelectedRow(), 1));
+				}
+			}
+		});
+		scrollTableEmail.setSize(410, 120);
+		scrollTableEmail.setLocation(20, 340);
+
 		this.add(labelNome);
 		this.add(labelCPF);
 		this.add(labelDataNascimento);
@@ -380,6 +499,14 @@ public class ManutencaoAgenda extends JDialog {
 		this.add(buttonTelefoneInserir);
 		this.add(buttonTelefoneAlterar);
 		this.add(buttonTelefoneExcluir);
+		this.add(scrollTableEmail);
+		this.add(labelEmail);
+		this.add(labelTipoEmail);
+		this.add(txtFieldEmail);
+		this.add(comboBoxTipoEmail);
+		this.add(btnEmailInserir);
+		this.add(btnEmailAlterar);
+		this.add(btnEmailExcluir);
 
 		this.setVisible(true);
 	}

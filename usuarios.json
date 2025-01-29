@@ -99,11 +99,42 @@
           ]
         },
         {
-          "nome": "Paulo Testando Inserção",
-          "dataNascimento": "Apr 30, 2010, 3:47:20 PM",
+          "nome": "Paulo Testando",
+          "dataNascimento": "Apr 30, 2010, 12:00:00 AM",
           "cpf": "780.436.730-98",
-          "telefones": [],
-          "emails": []
+          "telefones": [
+            {
+              "numero": "99663-3221",
+              "tipoTelefone": "CELULAR"
+            }
+          ],
+          "emails": [
+            {
+              "endereco": "bdfbdsfb@vbfsvsdf",
+              "tipoEmail": "PESSOAL"
+            }
+          ]
+        },
+        {
+          "nome": "Roberbau",
+          "dataNascimento": "Apr 7, 1982, 12:00:00 AM",
+          "cpf": "954.494.421-49",
+          "telefones": [
+            {
+              "numero": "99271-0010",
+              "tipoTelefone": "CELULAR"
+            }
+          ],
+          "emails": [
+            {
+              "endereco": "sefgberes",
+              "tipoEmail": "PESSOAL"
+            },
+            {
+              "endereco": "sgtreghrght",
+              "tipoEmail": "PROFISSIONAL"
+            }
+          ]
         }
       ]
     }
