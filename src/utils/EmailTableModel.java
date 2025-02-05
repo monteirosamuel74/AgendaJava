@@ -46,7 +46,7 @@ public class EmailTableModel extends AbstractTableModel {
             case 0:
                 return email.getEndereco();
             case 1:
-                return email.getClass();
+                return email.getTipoEmail();
             default:
                 return null;
         }

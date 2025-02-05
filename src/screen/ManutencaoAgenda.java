@@ -101,6 +101,7 @@ public class ManutencaoAgenda extends JDialog {
 			textFieldDataNascimento
 					.setText(new SimpleDateFormat("dd/MM/yyyy").format(pessoa.getDataNascimento()));
 			telefoneTableModel.setTelefones(pessoa.getTelefones());
+			emailTableModel.setEmails(pessoa.getEmails());
 		} catch (Exception exc) {
 			System.out.println(exc.getMessage());
 		}

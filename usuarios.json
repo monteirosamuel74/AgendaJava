@@ -54,7 +54,8 @@
           ],
           "emails": [
             {
-              "endereco": "josé.souza1@example.com"
+              "endereco": "jose.souza1@example.com",
+              "tipoEmail": "PROFISSIONAL"
             }
           ]
         },
@@ -75,30 +76,6 @@
           ]
         },
         {
-          "nome": "Ana Pereira",
-          "dataNascimento": "Dec 6, 1993, 3:47:20 PM",
-          "cpf": "655.352.924-30",
-          "telefones": [
-            {
-              "numero": "55555-5555",
-              "tipoTelefone": "RESIDENCIAL"
-            },
-            {
-              "numero": "33333-7777",
-              "tipoTelefone": "CELULAR"
-            },
-            {
-              "numero": "55555-5555",
-              "tipoTelefone": "CELULAR"
-            }
-          ],
-          "emails": [
-            {
-              "endereco": "ana.pereira1@example.com"
-            }
-          ]
-        },
-        {
           "nome": "Paulo Testando",
           "dataNascimento": "Apr 30, 2010, 12:00:00 AM",
           "cpf": "780.436.730-98",
@@ -106,11 +83,19 @@
             {
               "numero": "99663-3221",
               "tipoTelefone": "CELULAR"
+            },
+            {
+              "numero": "12345-6789",
+              "tipoTelefone": "RESIDENCIAL"
             }
           ],
           "emails": [
             {
-              "endereco": "bdfbdsfb@vbfsvsdf",
+              "endereco": "bdfbdsfb@vbfsvsdf.com",
+              "tipoEmail": "PROFISSIONAL"
+            },
+            {
+              "endereco": "gargewsrg@vsvsd.com.br",
               "tipoEmail": "PESSOAL"
             }
           ]
@@ -133,6 +118,23 @@
             {
               "endereco": "sgtreghrght",
               "tipoEmail": "PROFISSIONAL"
+            }
+          ]
+        },
+        {
+          "nome": "Daglestone Klayton Rouseboun",
+          "dataNascimento": "Feb 1, 1752, 12:00:00 AM",
+          "cpf": "715.493.257-01",
+          "telefones": [
+            {
+              "numero": "75395-1486",
+              "tipoTelefone": "CELULAR"
+            }
+          ],
+          "emails": [
+            {
+              "endereco": "daglesklay@email.com",
+              "tipoEmail": "PESSOAL"
             }
           ]
         }
